@@ -51,11 +51,11 @@ router.put("/:id", (req, res) => {
 
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
-  taskService.deleteTask(id);
   const task = taskService.findTaskById(id);
   if (!task) {
     return res.status(404).json({ message: "Tarefa não encontrada" });
   }
+  taskService.deleteTask(id);
   res.status(200).json({ message: "Tarefa deletada com sucesso!" });
 });
 

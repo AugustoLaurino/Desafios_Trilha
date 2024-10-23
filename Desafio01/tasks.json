@@ -1,23 +1,5 @@
 [
   {
-    "id": "3aba7f4c-19a8-4760-8f48-4497c9673414",
-    "name": "Minha primeira tarefa",
-    "description": "Descrição da tarefa",
-    "status": "Em progresso"
-  },
-  {
-    "id": "996c2cd3-daff-46d1-aa25-85e944bd4811",
-    "name": "Minha terceira tarefa",
-    "description": "Descrição da tarefa",
-    "status": "pendente"
-  },
-  {
-    "id": "60dcac18-3295-4feb-8ec7-0fe483666d5f",
-    "name": "Minha quarta tarefa",
-    "description": "Descrição da tarefa",
-    "status": "teste"
-  },
-  {
     "id": "c4705cb3-a17e-4e54-afa7-89b5261663d3",
     "name": "Minha quarta tarefa",
     "description": "Descrição da tarefa",

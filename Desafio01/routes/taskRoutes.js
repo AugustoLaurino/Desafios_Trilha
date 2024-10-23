@@ -29,16 +29,14 @@ router.put("/:id", (req, res) => {
   const updatedData = {};
   if (name) updatedData.name = name;
   if (description) updatedData.description = description;
+  if (status) updatedData.status = status;
 
-  if (status) {
-    try {
-      updatedData.status = status;
-      taskSchema.partial().parse({ ...updatedData, id });
-    } catch (error) {
-      return res
-        .status(400)
-        .json({ message: error.errors.map((e) => e.message).join(", ") });
-    }
+  try {
+    taskSchema.partial().parse({ ...updatedData, id });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: error.errors.map((e) => e.message).join(", ") });
   }
 
   const updatedTask = taskService.updateTask(id, updatedData);

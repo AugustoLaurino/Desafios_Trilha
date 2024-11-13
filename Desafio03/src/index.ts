@@ -2,11 +2,13 @@ import express from "express";
 import { swaggerUi, swaggerSpec } from "./swagger";
 import router from "./routes/tasks";
 import logger from "./logger";
+import limiter from "./middleware/rateLimiter";
 
 const app = express();
 const port = 3000;
 
 app.use(express.json()); //para o programa entender json
+app.use(limiter);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec)); //cria a pagina do swagger
 

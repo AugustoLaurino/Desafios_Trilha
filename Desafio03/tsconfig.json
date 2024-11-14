@@ -5,8 +5,9 @@
     "strict": true, // Aplica verificações mais rigorosas, tornando o código mais seguro
     "outDir": "./dist", //Separa o código fonte TypeScript (em src/) do código JavaScript gerado.
     "esModuleInterop": true, //Posso importar pacotes CommonJS usando a sintaxe import, mesmo se o pacote não tiver sido escrito com suporte nativo para módulos ES.
-    "forceConsistentCasingInFileNames": true // Garante a consistência de maiúsculas/minúsculas nos imports
+    "forceConsistentCasingInFileNames": true, // Garante a consistência de maiúsculas/minúsculas nos imports
+    "typeRoots": ["./node_modules/@types", "./src/@types"]
   },
-  "include": ["src/**/*.ts"], //Incluir todos os arquivos .ts dentro da pasta src
+  "include": ["src/**/*.ts", "@types"], //Incluir todos os arquivos .ts dentro da pasta src
   "exclude": ["node_modules"] //Exclui a pasta node_modules, que contém dependências externas, já que esses arquivos não precisam ser recompilados.
 }

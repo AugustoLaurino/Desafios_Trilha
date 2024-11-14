@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Este projeto é uma API de Gerenciamento de Tarefas construída utilizando Node.js com TypeScript. A API permite realizar operações de CRUD (criação, leitura, atualização e exclusão) em tarefas. O banco de dados utilizado é o SQLite. O projeto também utiliza Zod para validação de entradas, Winston para geração de logs e Swagger para documentação interativa da API.
+Este projeto é uma API de Gerenciamento de Tarefas construída utilizando Node.js com TypeScript. A API permite realizar operações de CRUD (criação, leitura, atualização e exclusão) em tarefas com controle de autenticação JWT e permissões de usuário. O projeto também integra cache com Redis para otimizar consultas frequentes e usa Docker para simplificar a execução em ambientes variados. O banco de dados utilizado é o Postgres. O projeto também utiliza Zod para validação de entradas, Winston para geração de logs e Swagger para documentação interativa da API.
 
 ---
 
@@ -15,10 +15,15 @@ Este projeto é uma API de Gerenciamento de Tarefas construída utilizando Node.
   - `description` (string, até 255 caracteres, opcional)
   - `status` (enum: `'pending' | 'in_progress' | 'done'`)
 - **Validação de Dados** com Zod.
-- **Banco de Dados**: SQLite para armazenamento persistente.
+- **Banco de Dados**: Postgres para armazenamento persistente.
 - **Registro de Logs** com Winston.
 - **Documentação da API** com Swagger.
 - **Tratamento de Erros**: Respostas padronizadas para erros de validação e erros do servidor.
+- **Rate Limiting**: Limite de 60 requisições por minuto nas rotas, retornando erro caso o limite seja ultrapassado.
+- **Autenticação JWT**: Exige que o usuário esteja autenticado para acessar rotas de criação, edição e exclusão de tarefas.
+- **Autorização**: Garante que apenas usuários autorizados possam modificar tarefas.
+- **Cache com Redis**: Utilizado para cachear as respostas das rotas de listagem de tarefas, otimizado para consultas frequentes. Cache é invalidado e atualizado após operações de adição, atualização ou exclusão.
+- **Containerização com Docker**: Facilita a execução da aplicação em diferentes ambientes, com uso de Docker Compose para gerenciamento de serviços, incluindo Redis.
 
 ---
 
@@ -27,11 +32,13 @@ Este projeto é uma API de Gerenciamento de Tarefas construída utilizando Node.
 - **Node.js**: Ambiente de execução para JavaScript no backend.
 - **TypeScript**: Superset de JavaScript para tipagem estática.
 - **Express.js**: Framework minimalista para criação de APIs.
-- **SQLite**: Banco de dados leve e eficiente.
+- **Postgres**: Banco de dados leve e eficiente.
 - **Zod**: Biblioteca de validação de esquemas.
 - **Winston**: Biblioteca de registro de logs.
 - **Swagger**: Documentação interativa da API.
 - **ESLint e Prettier**: Ferramentas de qualidade e formatação de código.
+- **Redis**: Cache para otimização de consultas de listagem de tarefas.
+- **Docker e Docker Compose**: Containerização para consistência em ambientes variados.
 
 ---
 
@@ -41,44 +48,14 @@ Este projeto é uma API de Gerenciamento de Tarefas construída utilizando Node.
 
 - Node.js (v16+)
 - npm ou yarn
+- Docker e Docker Compose
 
 ### Passos para Configuração
 
-# Dependências do Projeto
-
-Este projeto utiliza as seguintes dependências. Para instalá-las, utilize o comando `npm install`.
-
-## Dependências Principais
-
-- **express**: Framework para criar servidores web e APIs.
-- **typescript**: Superset do JavaScript que adiciona tipagem estática.
-- **sqlite3**: Biblioteca para interagir com bancos de dados SQLite.
-- **zod**: Biblioteca para validação de esquemas de dados.
-- **winston**: Biblioteca para logging (registro de logs).
-- **swagger-ui-express**: Integração do Swagger UI com o Express para documentação da API.
-
-## Dependências de Desenvolvimento
-
-- **@types/node**: Tipos TypeScript para Node.js.
-- **@types/express**: Tipos TypeScript para Express.js.
-- **@types/sqlite3**: Tipos TypeScript para SQLite3.
-- **eslint**: Ferramenta para análise de código estático para encontrar problemas.
-- **prettier**: Ferramenta de formatação de código.
-- **ts-node**: Execução de arquivos TypeScript diretamente.
-
-## Instalação
-
-Para instalar as dependências principais, execute:
-
-```bash
-npm install express typescript sqlite3 zod winston swagger-ui-express cors
-```
-
-Para instalar as dependências de desenvolvimento, execute:
-
-```bash
-npm install --save-dev @types/node @types/express @types/sqlite3 eslint prettier ts-node
-```
+1. Clone o repositório.
+2. Instale as dependências com `npm install` ou `yarn install`.
+3. Configure o ambiente, criando um arquivo `.env` e definindo as variáveis de ambiente necessárias, como a chave secreta JWT e as configurações do Redis.
+4. Para iniciar o ambiente Docker, execute o comando `docker-compose up`.
 
 ## Documentação da API
 
@@ -162,29 +139,19 @@ A documentação da API está disponível via Swagger e pode ser acessada atrav�
   }
   ```
 
+  ## Execução dos Containers
+
+Para iniciar a aplicação com Docker Compose, execute:
+
+```bash
+docker-compose up
+```
+
+Isso iniciará tanto a API quanto o serviço Redis.
+
 ## Fontes de Dados
 
 Durante o desenvolvimento, utilizamos as seguintes fontes de dados:
-
-- **Banco de Dados**: SQLite
-
-  - A estrutura do banco de dados possui uma tabela tasks com as seguintes colunas:
-    - `id`: UUID (Chave primária)
-    - `name`: string (máximo de 128 caracteres)
-    - `description`: string (máximo de 255 caracteres, opcional)
-    - `status`: string (enum: `pending`, `in_progress`, `done`)
-
-- **Validação de Esquemas**: Utilizamos o Zod para validar os dados das tarefas no arquivo `schemas/task.ts`:
-
-  ```typescript
-  const taskSchema = z.object({
-    name: z.string().max(128),
-    description: z.string().max(255).optional(),
-    status: z.enum(["pending", "in_progress", "done"]),
-  });
-  ```
-
-  Esse esquema também é utilizado para validar atualizações parciais com `taskSchema.partial()`.
 
 ## Logger
 
@@ -225,3 +192,15 @@ Aqui estão alguns links que utilizei para realizar esse projeto.
 ## 5. Markdown
 
 - [GitHub Markdown Guide](https://guides.github.com/features/mastering-markdown/)
+
+## 6. Redis
+
+- [Documentação do Redis](https://redis.io/documentation)
+
+## 7. Docker
+
+- [Documentação do Docker](https://docs.docker.com/get-started/)
+
+## 7. Rate Limiter
+
+- [Rate Limiter](https://www.youtube.com/watch?v=UUPI_-TcdL8)
